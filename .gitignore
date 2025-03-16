@@ -1,0 +1,7 @@
+# list of files that does not need to upload into git
+
+node_modules
+.env
+.log
+
+public/uploads
