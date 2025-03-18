@@ -6,6 +6,7 @@ const cors = require('cors')
 
 const TESTROUTE = require('./routes/testRoute')
 const CategoryRoute = require('./routes/categoryRoute')
+const ProductRoute = require('./routes/ProductRoute')
 
 
 const app = express()
@@ -21,6 +22,7 @@ app.use(cors())
 
 app.use(TESTROUTE)
 app.use(CategoryRoute)
+app.use(ProductRoute)
 
 
 app.listen(port, ()=>{
