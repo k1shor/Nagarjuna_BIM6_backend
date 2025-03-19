@@ -1,8 +1,9 @@
 const { addCategory, getAllCategories, getCategoryDetails, updateCategory, deleteCategory } = require('../controller/categoryController')
+const { categoryCheck, validationScript } = require('../middleware/validationfile')
 
 const router = require('express').Router()
 
-router.post(`/addcategory`, addCategory)
+router.post(`/addcategory`, categoryCheck, validationScript, addCategory)
 router.get('/getallcategories', getAllCategories)
 router.get('/getcategorydetails/:id', getCategoryDetails)
 router.put('/updatecategory/:id', updateCategory)

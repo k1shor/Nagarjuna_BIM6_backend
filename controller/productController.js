@@ -1,4 +1,5 @@
 const ProductModel = require('../models/ProductModel')
+const fs = require('fs')
 
 // add product
 exports.addProduct = async (req, res) => {
@@ -51,12 +52,15 @@ exports.deleteProduct = (req, res) => {
             if (!deletedProduct) {
                 return res.status(400).json({ error: "Product not found" })
             }
-            else{
-                res.send({message:"Product deleted Successfully"})
+            else {
+                if(fs.existsSync(deletedProduct.product_image)){
+                    fs.unlinkSync(deletedProduct.product_image)
+                }
+                res.send({ message: "Product deleted Successfully" })
             }
         })
-        .catch(error=>{
-            return res.status(500).json({error: error.message})
+        .catch(error => {
+            return res.status(500).json({ error: error.message })
         })
 }
 
@@ -64,9 +68,19 @@ exports.deleteProduct = (req, res) => {
 exports.updateProduct = async (req, res) => {
     // product from db
     let productToUpdate = await ProductModel.findById(req.params.id)
-    
+    if (!productToUpdate) {
+        return res.status(400).json({ error: "Something went wrong." })
+    }
+    // handling file update
+    if (req.file) {
+        if (fs.existsSync(productToUpdate.product_image)) {
+            fs.unlinkSync(productToUpdate.product_image)
+        }
+        productToUpdate.product_image = req.file.path
+    }
+
     // updating data from frontend
-    let {product_name, product_description, count_in_stock, product_price, category, rating} = req.body
+    let { product_name, product_description, count_in_stock, product_price, category, rating } = req.body
 
     productToUpdate.product_name = product_name ? product_name : productToUpdate.product_name
     productToUpdate.product_description = product_description ? product_description : productToUpdate.product_description
@@ -77,8 +91,8 @@ exports.updateProduct = async (req, res) => {
 
     productToUpdate = await productToUpdate.save()
 
-    if(!productToUpdate){
-        return res.status(400).json({error:"Something went wrong"})
+    if (!productToUpdate) {
+        return res.status(400).json({ error: "Something went wrong" })
     }
     res.send(productToUpdate)
 
