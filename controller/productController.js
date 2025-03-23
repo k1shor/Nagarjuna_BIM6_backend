@@ -3,6 +3,7 @@ const fs = require('fs')
 
 // add product
 exports.addProduct = async (req, res) => {
+    console.log(req.body)
     let productToAdd = new ProductModel({
         product_name: req.body.product_name,
         product_price: req.body.product_price,
