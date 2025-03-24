@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const emailSender = require('../middleware/emailSender')
 
-const jwt = requrire('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
 // register
 exports.register = async (req, res) => {
@@ -143,7 +143,7 @@ exports.resetPassword = async (req, res) => {
 }
 
 // login
-exports.signup = async (req, res) => {
+exports.signin = async (req, res) => {
     // check if email is registered or not
     let user = await UserModel.findOne({email: req.body.email})
     if(!user){
@@ -162,7 +162,18 @@ exports.signup = async (req, res) => {
     }
 
     // generate login token using jwt - jsonwebtoken
+    let token = jwt.sign({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+    }, "JWT SECRET FOR LOGIN")
+
+    if(!token){
+        return res.status(400).json({error:"Something went wrong"})
+    }
 
 
     // send token/message to user
+    res.send(token)
 }
