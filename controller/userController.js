@@ -46,7 +46,7 @@ exports.register = async (req, res) => {
     }
 
     // send token in email
-    const VERIFY_URL = `http://localhost:5000/verify/${token.token}`
+    const VERIFY_URL = `http://localhost:5173/verify/${token.token}`
 
     emailSender({
         from: "noreply@something.com",
@@ -144,11 +144,13 @@ exports.resetPassword = async (req, res) => {
 
 // login
 exports.signin = async (req, res) => {
+    console.log(req.body)
     // check if email is registered or not
     let user = await UserModel.findOne({email: req.body.email})
     if(!user){
         return res.status(400).json({error:"Email not registered"})
     }
+    console.log(user)
 
     // check password
     let passwordMatch = await bcrypt.compare(req.body.password, user.password)
@@ -175,5 +177,5 @@ exports.signin = async (req, res) => {
 
 
     // send token/message to user
-    res.send(token)
+    res.send({token, role: user.role})
 }
